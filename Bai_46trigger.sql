@@ -91,3 +91,40 @@ VALUES ('10248',1,1,5)
 select * from dbo.Products where ProductID =1
 select * from [Order Details] where OrderID =1031;
 select * from dbo.Orders
+
+
+
+-- Bài tập về nhà : 
+-- Bài 1: Bổ sung thêm cột LastModified và tạo một trigger để sau khi một sản phẩm được thêm hoặc cập nhật vào bảng "Product"
+-- tự động cập nhật trường LastMdodified với ngày và giờ hiện tại 
+ALTER TABLE dbo.Products 
+ADD LastModified DateTime;
+-- Cách 1: 
+CREATE TRIGGER Trig_UpDateLastModifiedProducts
+ON dbo.Products
+AFTER UPDATE 
+AS
+BEGIN 
+	UPDATE dbo.Products
+	SET LastModified = getDate()
+	FROM inserted i
+	WHERE i.ProductID = Products.ProductID
+
+END;
+
+-- Cách 2: 
+ALTER TRIGGER tg_UpdateLastModifiedWhenChangeProduct
+ON dbo.Products
+AFTER INSERT
+AS
+BEGIN
+	SET NOCOUNT ON;
+    UPDATE dbo.Products SET LastModified = GETDATE()
+	FROM dbo.Products p
+	INNER JOIN Inserted i 
+	ON i.ProductID = p.ProductID
+END
+
+select * from dbo.Products
+insert into dbo.Products ([ProductName],[SupplierID],[CategoryID])
+Values ('test_124',1,1)
